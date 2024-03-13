@@ -11,7 +11,6 @@ export const metadata: Metadata = {
   title: "Clerk Pro",
   description: "Search Clerk users, including metadata.. (gh/danicodeve)",
 };
-export const dynamic = "force-dynamic";
 // UI that is shared and automatically applied to all routes
 const RootLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
   return (
