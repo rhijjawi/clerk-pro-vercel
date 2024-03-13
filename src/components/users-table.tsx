@@ -6,6 +6,7 @@ import { User } from "@clerk/backend";
 import { flatten, getValidKeys } from "../lib/utils";
 import { DataTable } from "@/components/ui/data-table";
 import Loader from "./ui/loader";
+import { useEffect, useState } from "react";
 
 interface GetUsersResponse {
   status: number;
@@ -20,7 +21,12 @@ export default function UsersTable() {
   }>({
     queryKey: ["clerkUsers"],
     queryFn: async () => {
-      const response = await fetch("/users");
+      if (localStorage.getItem('secret')){
+      const response = await fetch("/users", {
+        headers : {
+          "Authorization" : `${Buffer.from(`${localStorage.getItem("secret")}`).toString("base64")}`
+        }
+      });
       const responseJSON = (await response.json()) as GetUsersResponse;
       if (responseJSON.status !== 200) {
         throw new Error(responseJSON.error);
@@ -29,12 +35,17 @@ export default function UsersTable() {
         users: responseJSON.users ?? [],
         updateTime: new Date().toLocaleString(),
       };
-    },
-  });
+    }
+    else {
+      throw new Error("The provided Clerk Secret Key is invalid. Make sure that your Clerk Secret Key is correct.");
+    }
+  }});
+
 
   // first load state
   if (isPending)
     return (
+  
       <div className='flex items-center justify-center gap-3 text-muted-foreground'>
         <Loader />
       </div>

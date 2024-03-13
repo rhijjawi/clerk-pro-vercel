@@ -1,11 +1,12 @@
 import { sleep } from "@/lib/utils";
 import { Clerk, User } from "@clerk/backend";
 import { isClerkAPIResponseError } from "@clerk/shared";
+import { NextApiRequest } from "next";
 import { NextResponse } from "next/server";
 
-export async function GET() {
+export async function GET(req : Request) {
   try {
-    const users = await clerkUsers();
+    const users = await clerkUsers(req.headers.get("Authorization") as  string);
     return Response.json({ users: users, status: 200 });
   } catch (error: unknown) {
     if (isClerkAPIResponseError(error)) {
@@ -29,11 +30,12 @@ export async function GET() {
   }
 }
 
-async function clerkUsers() {
-  if (!process.env.CLERK_SECRET_KEY)
-    throw new Error("Environment variable CLERK_SECRET_KEY not found.");
+async function clerkUsers(CLERK_SECRET_KEY : string) {
+  const secretKey = Buffer.from(CLERK_SECRET_KEY, 'base64').toString('ascii')
+  if (!CLERK_SECRET_KEY)
+    throw new Error("Variable CLERK_SECRET_KEY not supplied.");
 
-  const clerk = Clerk({ secretKey: process.env.CLERK_SECRET_KEY });
+  const clerk = Clerk({ secretKey });
   const clerkUsers: User[] = [];
 
   const maxRetries = 3;
