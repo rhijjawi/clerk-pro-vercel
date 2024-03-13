@@ -2,12 +2,13 @@ import { sleep } from "@/lib/utils";
 import { Clerk, User } from "@clerk/backend";
 import { isClerkAPIResponseError } from "@clerk/shared";
 import { NextResponse } from "next/server";
+import { headers } from "next/headers";
 
-export const dynamic = "force-dynamic";
 
 export async function GET(req: Request) {
+  const headersList = headers()
   try {
-    const users = await clerkUsers(req.headers.get("Authorization") as string);
+    const users = await clerkUsers(headersList.get("Authorization") as string);
     return Response.json({ users: users, status: 200 });
   } catch (error: unknown) {
     if (isClerkAPIResponseError(error)) {
