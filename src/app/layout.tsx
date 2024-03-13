@@ -6,6 +6,7 @@ import { Metadata } from "next";
 import NonSsrWrapper from "@/components/non-ssr-wrapper";
 import { KeyIcon, Telescope } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import KeyProvider from "@/components/key-provider"
 import Key from "@/components/Key"
 export const metadata: Metadata = {
   title: "Clerk Pro",
@@ -24,19 +25,21 @@ const RootLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
             enableSystem
             disableTransitionOnChange>
             <Providers>
-              <header className='sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur'>
-                <div className='container flex h-14 items-center'>
-                  <div className='mr-4 hidden gap-2 font-semibold md:flex'>
-                    <Telescope />
-                    clerk-pro
+              <KeyProvider>
+                <header className='sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur'>
+                  <div className='container flex h-14 items-center'>
+                    <div className='mr-4 hidden gap-2 font-semibold md:flex'>
+                      <Telescope />
+                      clerk-pro
+                    </div>
+                    <div className='flex flex-1 items-center justify-between space-x-2 md:justify-end'>
+                      <Key/>
+                      <ModeToggle />
+                    </div>
                   </div>
-                  <div className='flex flex-1 items-center justify-between space-x-2 md:justify-end'>
-                    <Key/>
-                    <ModeToggle />
-                  </div>
-                </div>
-              </header>
-              {children}
+                </header>
+                {children}
+              </KeyProvider>
             </Providers>
           </ThemeProvider>
         </NonSsrWrapper>

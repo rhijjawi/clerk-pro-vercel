@@ -6,7 +6,9 @@ import { User } from "@clerk/backend";
 import { flatten, getValidKeys } from "../lib/utils";
 import { DataTable } from "@/components/ui/data-table";
 import Loader from "./ui/loader";
-import { useEffect, useState } from "react";
+import { useKeyProvider } from "./key-provider";
+import { useEffect } from "react";
+
 
 interface GetUsersResponse {
   status: number;
@@ -15,37 +17,45 @@ interface GetUsersResponse {
 }
 
 export default function UsersTable() {
+  const {key} = useKeyProvider()
   const { data, isPending, error, refetch, isFetching } = useQuery<{
     users: User[];
     updateTime: string;
   }>({
+    retry: (failureCount, error)=>{
+      const json = JSON.parse(error.message)
+      if (failureCount >= 3 || (json.status && json.status == 401)){
+        return false
+      }
+      return true
+
+    },
     queryKey: ["clerkUsers"],
     queryFn: async () => {
-      if (localStorage.getItem('secret')){
-      const response = await fetch("/users", {
-        headers : {
-          "Authorization" : `${Buffer.from(`${localStorage.getItem("secret")}`).toString("base64")}`
+        const response = await fetch("/users", {
+          headers : {
+            "Authorization" : `${Buffer.from(`${key}`).toString("base64")}`
+          }
+        });
+        const responseJSON = (await response.json()) as GetUsersResponse;
+        if (responseJSON.status !== 200) {
+          throw new Error(JSON.stringify(responseJSON));
         }
-      });
-      const responseJSON = (await response.json()) as GetUsersResponse;
-      if (responseJSON.status !== 200) {
-        throw new Error(responseJSON.error);
+        return {
+          users: responseJSON.users ?? [],
+          updateTime: new Date().toLocaleString(),
+        };
       }
-      return {
-        users: responseJSON.users ?? [],
-        updateTime: new Date().toLocaleString(),
-      };
-    }
-    else {
-      throw new Error("The provided Clerk Secret Key is invalid. Make sure that your Clerk Secret Key is correct.");
-    }
-  }});
-
-
+    });
+    useEffect(()=>{
+      console.log('key changed')
+      refetch()
+    }, [key])
+    
+    
   // first load state
   if (isPending)
     return (
-  
       <div className='flex items-center justify-center gap-3 text-muted-foreground'>
         <Loader />
       </div>
@@ -99,5 +109,5 @@ export default function UsersTable() {
 }
 
 const ErrorMessage = ({ message }: { message: string }) => {
-  return <div className='flex items-center justify-center'>{message}</div>;
+  return <div className='flex items-center justify-center'>{JSON.parse(message) ? JSON.parse(message).error : message}</div>;
 };

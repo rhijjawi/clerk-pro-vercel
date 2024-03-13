@@ -52,11 +52,10 @@ async function clerkUsers(CLERK_SECRET_KEY : string) {
       if (response.length === limit) {
         offset += limit;
       } else {
-        // finished loading clerk users, exit loop
         break;
       }
     } catch (error) {
-      retries++;
+      (!!(error.status) && error.status == 401) ? retries = 2 : retries++;
       throw error;
     }
   }
