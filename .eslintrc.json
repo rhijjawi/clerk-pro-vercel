@@ -29,9 +29,9 @@
       "version": "detect"
     }
   },
-  "rules": { 
+  "rules": {
     "prettier/prettier": "error",
-    "react/display-name" : "off",
+    "react/display-name": "off",
     "jsx-a11y/heading-has-content": "off"
   }
 }

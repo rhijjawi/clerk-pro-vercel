@@ -4,10 +4,9 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { ModeToggle } from "@/components/mode-toggle";
 import { Metadata } from "next";
 import NonSsrWrapper from "@/components/non-ssr-wrapper";
-import { KeyIcon, Telescope } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import KeyProvider from "@/components/key-provider"
-import Key from "@/components/Key"
+import { Telescope } from "lucide-react";
+import KeyProvider from "@/components/key-provider";
+import Key from "@/components/Key";
 export const metadata: Metadata = {
   title: "Clerk Pro",
   description: "Search Clerk users, including metadata.. (gh/danicodeve)",
@@ -33,7 +32,7 @@ const RootLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
                       clerk-pro
                     </div>
                     <div className='flex flex-1 items-center justify-between space-x-2 md:justify-end'>
-                      <Key/>
+                      <Key />
                       <ModeToggle />
                     </div>
                   </div>

@@ -9,7 +9,6 @@ import Loader from "./ui/loader";
 import { useKeyProvider } from "./key-provider";
 import { useEffect } from "react";
 
-
 interface GetUsersResponse {
   status: number;
   users?: User[];
@@ -17,42 +16,40 @@ interface GetUsersResponse {
 }
 
 export default function UsersTable() {
-  const {key} = useKeyProvider()
+  const { key } = useKeyProvider();
   const { data, isPending, error, refetch, isFetching } = useQuery<{
     users: User[];
     updateTime: string;
   }>({
-    retry: (failureCount, error)=>{
-      const json = JSON.parse(error.message)
-      if (failureCount >= 3 || (json.status && json.status == 401)){
-        return false
+    retry: (failureCount, error) => {
+      const json = JSON.parse(error.message);
+      if (failureCount >= 3 || (json.status && json.status == 401)) {
+        return false;
       }
-      return true
-
+      return true;
     },
     queryKey: ["clerkUsers"],
     queryFn: async () => {
-        const response = await fetch("/users", {
-          headers : {
-            "Authorization" : `${Buffer.from(`${key}`).toString("base64")}`
-          }
-        });
-        const responseJSON = (await response.json()) as GetUsersResponse;
-        if (responseJSON.status !== 200) {
-          throw new Error(JSON.stringify(responseJSON));
-        }
-        return {
-          users: responseJSON.users ?? [],
-          updateTime: new Date().toLocaleString(),
-        };
+      const response = await fetch("/users", {
+        headers: {
+          Authorization: `${Buffer.from(`${key}`).toString("base64")}`,
+        },
+      });
+      const responseJSON = (await response.json()) as GetUsersResponse;
+      if (responseJSON.status !== 200) {
+        throw new Error(JSON.stringify(responseJSON));
       }
-    });
-    useEffect(()=>{
-      console.log('key changed')
-      refetch()
-    }, [key])
-    
-    
+      return {
+        users: responseJSON.users ?? [],
+        updateTime: new Date().toLocaleString(),
+      };
+    },
+  });
+  useEffect(() => {
+    refetch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [key]);
+
   // first load state
   if (isPending)
     return (
@@ -109,5 +106,9 @@ export default function UsersTable() {
 }
 
 const ErrorMessage = ({ message }: { message: string }) => {
-  return <div className='flex items-center justify-center'>{JSON.parse(message) ? JSON.parse(message).error : message}</div>;
+  return (
+    <div className='flex items-center justify-center'>
+      {JSON.parse(message) ? JSON.parse(message).error : message}
+    </div>
+  );
 };

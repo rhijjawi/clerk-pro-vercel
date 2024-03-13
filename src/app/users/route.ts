@@ -1,12 +1,11 @@
 import { sleep } from "@/lib/utils";
 import { Clerk, User } from "@clerk/backend";
 import { isClerkAPIResponseError } from "@clerk/shared";
-import { NextApiRequest } from "next";
 import { NextResponse } from "next/server";
 
-export async function GET(req : Request) {
+export async function GET(req: Request) {
   try {
-    const users = await clerkUsers(req.headers.get("Authorization") as  string);
+    const users = await clerkUsers(req.headers.get("Authorization") as string);
     return Response.json({ users: users, status: 200 });
   } catch (error: unknown) {
     if (isClerkAPIResponseError(error)) {
@@ -30,8 +29,8 @@ export async function GET(req : Request) {
   }
 }
 
-async function clerkUsers(CLERK_SECRET_KEY : string) {
-  const secretKey = Buffer.from(CLERK_SECRET_KEY, 'base64').toString('ascii')
+async function clerkUsers(CLERK_SECRET_KEY: string) {
+  const secretKey = Buffer.from(CLERK_SECRET_KEY, "base64").toString("ascii");
   if (!CLERK_SECRET_KEY)
     throw new Error("Variable CLERK_SECRET_KEY not supplied.");
 
@@ -55,7 +54,12 @@ async function clerkUsers(CLERK_SECRET_KEY : string) {
         break;
       }
     } catch (error) {
-      (!!((error as {status : number}).status) && ((error as {status : number}).status == 401)) ? retries = 2 : retries++;
+      (
+        !!(error as { status: number }).status &&
+        (error as { status: number }).status == 401
+      ) ?
+        (retries = 2)
+      : retries++;
       throw error;
     }
   }
