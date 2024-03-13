@@ -55,7 +55,7 @@ async function clerkUsers(CLERK_SECRET_KEY : string) {
         break;
       }
     } catch (error) {
-      (!!(error.status) && error.status == 401) ? retries = 2 : retries++;
+      (!!((error as {status : number}).status) && ((error as {status : number}).status == 401) ? retries = 2 : retries++;
       throw error;
     }
   }
