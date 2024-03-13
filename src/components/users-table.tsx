@@ -31,6 +31,7 @@ export default function UsersTable() {
     queryKey: ["clerkUsers"],
     queryFn: async () => {
       const response = await fetch("/users", {
+        cache: "force-cache",
         headers: {
           Authorization: `${Buffer.from(`${key}`).toString("base64")}`,
         },
