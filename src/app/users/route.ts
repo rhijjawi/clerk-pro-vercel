@@ -4,9 +4,8 @@ import { isClerkAPIResponseError } from "@clerk/shared";
 import { NextResponse } from "next/server";
 import { headers } from "next/headers";
 
-
-export async function GET(req: Request) {
-  const headersList = headers()
+export async function GET() {
+  const headersList = headers();
   try {
     const users = await clerkUsers(headersList.get("Authorization") as string);
     return Response.json({ users: users, status: 200 });
