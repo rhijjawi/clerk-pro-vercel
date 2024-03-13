@@ -10,7 +10,7 @@ import KeyProvider from "@/components/key-provider"
 import Key from "@/components/Key"
 export const metadata: Metadata = {
   title: "Clerk Pro",
-  description: "Search Clerk users, including metadata..",
+  description: "Search Clerk users, including metadata.. (gh/danicodeve)",
 };
 
 // UI that is shared and automatically applied to all routes
