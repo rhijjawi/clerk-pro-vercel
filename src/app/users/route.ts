@@ -3,7 +3,7 @@ import { Clerk, User } from "@clerk/backend";
 import { isClerkAPIResponseError } from "@clerk/shared";
 import { NextResponse } from "next/server";
 
-export const dynamic = 'force-dynamic'
+export const dynamic = 'force-dynamic';
 
 export async function GET(req: Request) {
   try {
